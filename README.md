@@ -1,2 +1,20 @@
 # scan-cgroup
-LinuxのCGROUPからメモリ状況をスキャンするシェル
+Linux の /sys/fs/cgroup の下から cgroup の slice をリストして、memory.stat を csvとして出力するシェルです。
+
+## 使い方
+出力は、Excel等で読み込んで、データを整理することができます。
+
+```
+ubuntu@node1:~$ sudo ./scan-cgroup.sh  |head
+start
+CGROUP,PROCESS,anon,file,kernel_stack,pagetables,percpu,sock,shmem,file_mapped,file_dirty,file_writeback,swapcached,anon_thp,file_thp,shmem_thp,inactive_anon,active_anon,inactive_file,active_file,unevictable,slab_reclaimable,slab_unreclaimable,slab,workingset_refault_anon,workingset_refault_file,workingset_activate_anon,workingset_activate_file,workingset_restore_anon,workingset_restore_file,workingset_nodereclaim,pgfault,pgmajfault,pgrefill,pgscan,pgsteal,pgactivate,pgdeactivate,pglazyfree,pglazyfreed,thp_fault_alloc,thp_collapse_alloc,
+/sys/fs/cgroup,[kthreadd];[rcu_gp];[rcu_par_gp];[slub_flushwq];[netns];[kworker/0:0H-events_highpri];[kworker/u4:0-events_power_efficient];[mm_percpu_wq];[rcu_tasks_rude_];[rcu_tasks_trace];[ksoftirqd/0];[rcu_sched];[migration/0];[idle_inject/0];[cpuhp/0];[cpuhp/1];[idle_inject/1];[migration/1];[ksoftirqd/1];[kworker/1:0H-events_highpri];[kdevtmpfs];[inet_frag_wq];[kauditd];[khungtaskd];[oom_reaper];[writeback];[kcompactd0];[ksmd];[khugepaged];[kintegrityd];[kblockd];[blkcg_punt_bio];[tpm_dev_wq];[ata_sff];[md];[edac-poller];[devfreq_wq];[watchdogd];[kworker/0:1H-kblockd];[kswapd0];[ecryptfs-kthrea];[kthrotld];[irq/24-aerdrv];[irq/24-pciehp];[irq/25-aerdrv];[irq/25-pciehp];[irq/26-aerdrv];[irq/26-pciehp];[irq/27-aerdrv];[irq/27-pciehp];[irq/28-aerdrv];[irq/28-pciehp];[irq/29-aerdrv];[irq/29-pciehp];[irq/30-aerdrv];[irq/30-pciehp];[irq/31-aerdrv];[irq/31-pciehp];[irq/32-aerdrv];[irq/32-pciehp];[irq/33-aerdrv];[irq/33-pciehp];[acpi_thermal_pm];[vfio-irqfd-clea];[mld];[kworker/1:1H-kblockd];[ipv6_addrconf];[kstrp];[zswap-shrink];[kworker/u5:0-xprtiod];[charger_manager];[scsi_eh_0];[scsi_tmf_0];[cryptd];[scsi_eh_1];[scsi_tmf_1];[scsi_eh_2];[scsi_tmf_2];[scsi_eh_3];[scsi_tmf_3];[scsi_eh_4];[scsi_tmf_4];[scsi_eh_5];[scsi_tmf_5];[kworker/u4:5-events_power_efficient];[raid5wq];[jbd2/vda2-8];[ext4-rsv-conver];[hwrng];[kaluad];[kmpath_rdacd];[kmpathd];[kmpath_handlerd];[ipmi-msghandler];[jbd2/vdb-8];[ext4-rsv-conver];[rpciod];[xprtiod];[nfsiod];[kworker/u5:1];[NFSv4;[kworker/0:4-events];[kworker/1:6-cgroup_destroy];[kworker/1:7-cgroup_destroy];[kworker/u4:1-ext4-rsv-conversion];[kworker/1:0-cgroup_destroy];[kworker/0:0-events];[kworker/1:1-events];[kworker/u4:2];[kworker/0:1-events];,396431360,1172353024,5537792,6393856,719032,12288,4202496,521834496,1007616,0,0,0,0,0,379215872,2318336,915521536,243384320,28282880,27938032,8762152,36700184,0,0,0,0,0,0,0,5235831,7658,0,0,0,66164,0,17,0,0,0,
+/sys/fs/cgroup/dev-hugepages.mount,,0,53248,0,0,0,0,0,0,0,0,0,0,0,0,0,0,8192,45056,0,2288,1024,3312,0,0,0,0,0,0,0,223,1,0,0,0,10,0,0,0,0,0,
+/sys/fs/cgroup/dev-mqueue.mount,,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,344,344,0,0,0,0,0,0,0,209,0,0,0,0,0,0,0,0,0,0,
+/sys/fs/cgroup/init.scope,/sbin/init;,2633728,978944,376832,12288,1728,0,417792,40960,0,0,0,0,0,0,3051520,0,49152,471040,40960,1561848,557864,2119712,0,0,0,0,0,0,0,12594,0,0,0,0,22,0,0,0,0,0,
+/sys/fs/cgroup/kubepods.slice,,221847552,675545088,2506752,2564096,174560,8192,1781760,324079616,0,0,0,0,0,0,223100928,491520,564666368,109133824,0,8243728,2657536,10901264,0,0,0,0,0,0,0,286383,4244,0,0,0,26362,0,17,0,0,0,
+/sys/fs/cgroup/kubepods.slice/kubepods-besteffort.slice,,65830912,200912896,557056,1015808,70296,0,4096,165449728,0,0,0,0,0,0,65798144,36864,195670016,5238784,0,1573344,842400,2415744,0,0,0,0,0,0,0,69898,1608,0,0,0,1137,0,0,0,0,0,
+/sys/fs/cgroup/kubepods.slice/kubepods-besteffort.slice/kubepods-besteffort-pod0845c68e_d443_4568_bcbd_ac7cce6a1fc5.slice,,3227648,13000704,81920,118784,11752,0,0,10940416,0,0,0,0,0,0,3219456,8192,12992512,8192,0,181952,146312,328264,0,0,0,0,0,0,0,3446,106,0,0,0,1,0,0,0,0,0,
+/sys/fs/cgroup/kubepods.slice/kubepods-besteffort.slice/kubepods-besteffort-pod0845c68e_d443_4568_bcbd_ac7cce6a1fc5.slice/cri-containerd-8434d44a03a4cab2e1427fc6707f0d27c182d106fb7995d1509b2e56707943a6.scope,/bin/node_exporter;,3182592,13000704,65536,98304,0,0,0,10940416,0,0,0,0,0,0,3178496,4096,12992512,8192,0,129600,102656,232256,0,0,0,0,0,0,0,2231,106,0,0,0,1,0,0,0,0,0,
+```
+
